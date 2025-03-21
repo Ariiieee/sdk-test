@@ -11,25 +11,58 @@
 				padding: 0;
 				height: 100%;
 				overflow: hidden;
+				font-family: Arial, sans-serif;
 			}
 			.container {
 				display: flex;
 				flex-direction: column;
 				height: 100vh;
+				position: relative;
 			}
 			.header {
 				background-color: #f5f5f5;
 				padding: 10px 20px;
 				border-bottom: 1px solid #ddd;
-			}
-			iframe {
-				flex: 1;
-				width: 100%;
-				border: none;
+				z-index: 10;
 			}
 			.controls {
-				padding: 10px;
+				padding: 15px;
 				background-color: #f8f8f8;
+				border-bottom: 1px solid #ddd;
+				z-index: 10;
+				position: relative;
+			}
+			.controls button,
+			.controls select {
+				margin-right: 10px;
+				padding: 8px 12px;
+				background-color: #4285f4;
+				color: white;
+				border: none;
+				border-radius: 4px;
+				cursor: pointer;
+				font-size: 14px;
+			}
+			.controls button:hover {
+				background-color: #3367d6;
+			}
+			.controls select {
+				background-color: white;
+				color: #333;
+				border: 1px solid #ddd;
+			}
+			.frame-container {
+				flex: 1;
+				position: relative;
+				overflow: hidden;
+			}
+			iframe {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				border: none;
 			}
 		</style>
 	</head>
@@ -43,18 +76,20 @@
 				</p>
 			</div>
 			<div class="controls">
-				<button onclick="reloadFrame()">Reload Project</button>
-				<button onclick="toggleFullscreen()">Toggle Fullscreen</button>
-				<select id="viewport" onchange="changeViewport()">
+				<button id="reloadBtn">Reload Project</button>
+				<button id="fullscreenBtn">Toggle Fullscreen</button>
+				<select id="viewport">
 					<option value="desktop">Desktop</option>
 					<option value="tablet">Tablet</option>
 					<option value="mobile">Mobile</option>
 				</select>
 			</div>
-			<iframe
-				id="projectFrame"
-				src="http://localhost:5174/?theme=#FD7A23&view=wallet&publicKey=OMNIPUBKEY_HZA3ERGYEE5XUFGTZDQV_MNKRSTA3-TU&phoneNumber=08020001111&usesPaylater=true&usesPromo=true&usesBills=true&usesAirtimeData=true&usesTransfer=true&usesPos=true"
-			></iframe>
+			<div class="frame-container">
+				<iframe
+					id="projectFrame"
+					src="http://localhost:5174/?theme=#FD7A23&view=wallet&publicKey=OMNIPUBKEY_HZA3ERGYEE5XUFGTZDQV_MNKRSTA3-TU&phoneNumber=08020001111&usesPaylater=true&usesPromo=true&usesBills=true&usesAirtimeData=true&usesTransfer=true&usesPos=true"
+				></iframe>
+			</div>
 		</div>
 
 		<script>
@@ -62,37 +97,53 @@
 				"http://localhost:5174/?theme=#FD7A23&view=wallet&publicKey=OMNIPUBKEY_HZA3ERGYEE5XUFGTZDQV_MNKRSTA3-TU&phoneNumber=08020001111&usesPaylater=true&usesPromo=true&usesBills=true&usesAirtimeData=true&usesTransfer=true&usesPos=true";
 			document.getElementById("projectFrame").src = projectUrl;
 
-			function reloadFrame() {
-				document.getElementById("projectFrame").src =
-					document.getElementById("projectFrame").src;
-			}
+			document.addEventListener("DOMContentLoaded", function () {
+				const reloadBtn = document.getElementById("reloadBtn");
+				const fullscreenBtn = document.getElementById("fullscreenBtn");
+				const viewportSelect = document.getElementById("viewport");
+				const projectFrame = document.getElementById("projectFrame");
 
-			function toggleFullscreen() {
-				const iframe = document.getElementById("projectFrame");
-				if (iframe.requestFullscreen) {
-					iframe.requestFullscreen();
-				} else if (iframe.webkitRequestFullscreen) {
-					iframe.webkitRequestFullscreen();
-				} else if (iframe.msRequestFullscreen) {
-					iframe.msRequestFullscreen();
-				}
-			}
+				reloadBtn.addEventListener("click", function () {
+					console.log("Reloading iframe");
+					projectFrame.src = projectFrame.src;
+				});
 
-			function changeViewport() {
-				const viewport = document.getElementById("viewport").value;
-				const iframe = document.getElementById("projectFrame");
+				fullscreenBtn.addEventListener("click", function () {
+					console.log("Toggle fullscreen");
+					if (projectFrame.requestFullscreen) {
+						projectFrame.requestFullscreen();
+					} else if (projectFrame.webkitRequestFullscreen) {
+						projectFrame.webkitRequestFullscreen();
+					} else if (projectFrame.msRequestFullscreen) {
+						projectFrame.msRequestFullscreen();
+					}
+				});
 
-				if (viewport === "mobile") {
-					iframe.style.width = "375px";
-					iframe.style.margin = "0 auto";
-				} else if (viewport === "tablet") {
-					iframe.style.width = "768px";
-					iframe.style.margin = "0 auto";
-				} else {
-					iframe.style.width = "100%";
-					iframe.style.margin = "0";
-				}
-			}
+				viewportSelect.addEventListener("change", function () {
+					console.log("Changing viewport to: " + this.value);
+					const frameContainer =
+						document.querySelector(".frame-container");
+
+					if (this.value === "mobile") {
+						projectFrame.style.width = "375px";
+						projectFrame.style.height = "100%";
+						projectFrame.style.left = "50%";
+						projectFrame.style.transform = "translateX(-50%)";
+					} else if (this.value === "tablet") {
+						projectFrame.style.width = "768px";
+						projectFrame.style.height = "100%";
+						projectFrame.style.left = "50%";
+						projectFrame.style.transform = "translateX(-50%)";
+					} else {
+						projectFrame.style.width = "100%";
+						projectFrame.style.height = "100%";
+						projectFrame.style.left = "0";
+						projectFrame.style.transform = "none";
+					}
+				});
+
+				console.log("Event listeners attached");
+			});
 		</script>
 	</body>
 </html>
