@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>SDK Test Environment</title>
+		<style>
+			body,
+			html {
+				margin: 0;
+				padding: 0;
+				height: 100%;
+				overflow: hidden;
+			}
+			.container {
+				display: flex;
+				flex-direction: column;
+				height: 100vh;
+			}
+			.header {
+				background-color: #f5f5f5;
+				padding: 10px 20px;
+				border-bottom: 1px solid #ddd;
+			}
+			iframe {
+				flex: 1;
+				width: 100%;
+				border: none;
+			}
+			.controls {
+				padding: 10px;
+				background-color: #f8f8f8;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="header">
+				<h2>SDK Test Environment</h2>
+				<p>
+					Version: <span id="version">1.0.0</span> | Environment:
+					<span id="environment">Testing</span>
+				</p>
+			</div>
+			<div class="controls">
+				<button onclick="reloadFrame()">Reload Project</button>
+				<button onclick="toggleFullscreen()">Toggle Fullscreen</button>
+				<select id="viewport" onchange="changeViewport()">
+					<option value="desktop">Desktop</option>
+					<option value="tablet">Tablet</option>
+					<option value="mobile">Mobile</option>
+				</select>
+			</div>
+			<iframe
+				id="projectFrame"
+				src="http://localhost:5174/?theme=#FD7A23&view=wallet&publicKey=OMNIPUBKEY_HZA3ERGYEE5XUFGTZDQV_MNKRSTA3-TU&phoneNumber=08020001111&usesPaylater=true&usesPromo=true&usesBills=true&usesAirtimeData=true&usesTransfer=true&usesPos=true"
+			></iframe>
+		</div>
+
+		<script>
+			const projectUrl =
+				"http://localhost:5174/?theme=#FD7A23&view=wallet&publicKey=OMNIPUBKEY_HZA3ERGYEE5XUFGTZDQV_MNKRSTA3-TU&phoneNumber=08020001111&usesPaylater=true&usesPromo=true&usesBills=true&usesAirtimeData=true&usesTransfer=true&usesPos=true";
+			document.getElementById("projectFrame").src = projectUrl;
+
+			function reloadFrame() {
+				document.getElementById("projectFrame").src =
+					document.getElementById("projectFrame").src;
+			}
+
+			function toggleFullscreen() {
+				const iframe = document.getElementById("projectFrame");
+				if (iframe.requestFullscreen) {
+					iframe.requestFullscreen();
+				} else if (iframe.webkitRequestFullscreen) {
+					iframe.webkitRequestFullscreen();
+				} else if (iframe.msRequestFullscreen) {
+					iframe.msRequestFullscreen();
+				}
+			}
+
+			function changeViewport() {
+				const viewport = document.getElementById("viewport").value;
+				const iframe = document.getElementById("projectFrame");
+
+				if (viewport === "mobile") {
+					iframe.style.width = "375px";
+					iframe.style.margin = "0 auto";
+				} else if (viewport === "tablet") {
+					iframe.style.width = "768px";
+					iframe.style.margin = "0 auto";
+				} else {
+					iframe.style.width = "100%";
+					iframe.style.margin = "0";
+				}
+			}
+		</script>
+	</body>
+</html>
