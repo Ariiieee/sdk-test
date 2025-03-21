@@ -76,6 +76,7 @@
 				</p>
 			</div>
 			<div class="controls">
+				<!-- Test controls -->
 				<button id="reloadBtn">Reload Project</button>
 				<button id="fullscreenBtn">Toggle Fullscreen</button>
 				<select id="viewport">
@@ -95,20 +96,19 @@
 		<script>
 			const projectUrl =
 				"http://localhost:5174/?theme=#FD7A23&view=wallet&publicKey=OMNIPUBKEY_HZA3ERGYEE5XUFGTZDQV_MNKRSTA3-TU&phoneNumber=08020001111&usesPaylater=true&usesPromo=true&usesBills=true&usesAirtimeData=true&usesTransfer=true&usesPos=true";
-			document.getElementById("projectFrame").src = projectUrl;
 
-			document.addEventListener("DOMContentLoaded", function () {
-				const reloadBtn = document.getElementById("reloadBtn");
-				const fullscreenBtn = document.getElementById("fullscreenBtn");
-				const viewportSelect = document.getElementById("viewport");
+			window.onload = function () {
 				const projectFrame = document.getElementById("projectFrame");
+				projectFrame.src = projectUrl;
 
-				reloadBtn.addEventListener("click", function () {
+				document.getElementById("reloadBtn").onclick = function () {
 					console.log("Reloading iframe");
-					projectFrame.src = projectFrame.src;
-				});
 
-				fullscreenBtn.addEventListener("click", function () {
+					projectFrame.src =
+						projectUrl + "?reload=" + new Date().getTime();
+				};
+
+				document.getElementById("fullscreenBtn").onclick = function () {
 					console.log("Toggle fullscreen");
 					if (projectFrame.requestFullscreen) {
 						projectFrame.requestFullscreen();
@@ -117,19 +117,18 @@
 					} else if (projectFrame.msRequestFullscreen) {
 						projectFrame.msRequestFullscreen();
 					}
-				});
+				};
 
-				viewportSelect.addEventListener("change", function () {
-					console.log("Changing viewport to: " + this.value);
-					const frameContainer =
-						document.querySelector(".frame-container");
+				document.getElementById("viewport").onchange = function () {
+					const viewportValue = this.value;
+					console.log("Changing viewport to: " + viewportValue);
 
-					if (this.value === "mobile") {
+					if (viewportValue === "mobile") {
 						projectFrame.style.width = "375px";
 						projectFrame.style.height = "100%";
 						projectFrame.style.left = "50%";
 						projectFrame.style.transform = "translateX(-50%)";
-					} else if (this.value === "tablet") {
+					} else if (viewportValue === "tablet") {
 						projectFrame.style.width = "768px";
 						projectFrame.style.height = "100%";
 						projectFrame.style.left = "50%";
@@ -140,10 +139,10 @@
 						projectFrame.style.left = "0";
 						projectFrame.style.transform = "none";
 					}
-				});
+				};
 
-				console.log("Event listeners attached");
-			});
+				console.log("All event handlers initialized");
+			};
 		</script>
 	</body>
 </html>
